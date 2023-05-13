@@ -117,9 +117,8 @@ function API.__request(self, url, data, callbackOk, callbackError, httpMethod, h
     asyncHttpRequest(httpMethod or 'POST', url, { headers = headers or { ['Content-Type'] = 'application/json' }, data = data }, callbackOk, callbackError)
 end
 
-function API.process(self, delay)
-    local delay = delay or 1
-    if self.update.send and self.update.time + delay - os.clock() <= 0 then
+function API.process(self)
+    if self.update.send then
         self.update.send = false
         self:getUpdates(
             { offset = (self.update.id or -1) + 1 },
@@ -186,10 +185,10 @@ return setmetatable({}, {
             token = token,
             url = 'https://api.telegram.org/bot'..token..'/',
             events = {},
-            updateOnConnect = optionalParams.updateOnConnect or true,
+            updateOnConnect = true,
             update = {
                 send = true,
-                id = optionalParams.lastUpdateId or 0,
+                id = 0,
                 time = 0,
             }
         }, API)
